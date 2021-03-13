@@ -7,27 +7,27 @@ const findFastestPath = rows => {
 	let paths = [rows[0][0]];
 
 	for (let i = 1; i < rows.length; i++) {
-    // create the next row
-    let newPaths = [];
-    // the most right value of the piramyd
-    newPaths[i] = paths[i - 1] + rows[i][i];
-    // the most left value of the piramyd
-    newPaths[0] = paths[0] + rows[i][0];
+		// create the next row
+		let newPaths = [];
+		// the most right value of the piramyd
+		newPaths[i] = paths[i - 1] + rows[i][i];
+		// the most left value of the piramyd
+		newPaths[0] = paths[0] + rows[i][0];
 
-    // inbetween values check through our previous entries and see which
-    // of the two paths that can land here are best. We only care about
-    // the most optimal path to a particular point
-    for (let j = 1; j < i; j++) {
-			const min 	= Math.min(
+		// inbetween values check through our previous entries and see which
+		// of the two paths that can land here are best. We only care about
+		// the most optimal path to a particular point
+		for (let j = 1; j < i; j++) {
+			const min = Math.min(
 				paths[j - 1] + rows[i][j],
 				paths[j] + rows[i][j]
 			);
 
 			newPaths[j] = min;
-    }
-    paths = newPaths;
-  }
-  return Math.min.apply(Math, paths);
+		}
+		paths = newPaths;
+	}
+	return Math.min.apply(Math, paths);
 };
 
 const getLayersValues = async layers => {
