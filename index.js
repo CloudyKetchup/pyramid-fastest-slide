@@ -1,11 +1,30 @@
 const rl = require("readline").createInterface({ input: process.stdin, output: process.stdout });
 
-const inputToNumbers = answer => answer.split(" ").map(Number);
+/***
+ * Transform the keyboard input into numbers array
+ *
+ * @example
+ * const input = "2 3 5";
+ *
+ * // [2, 3, 5]
+ * const numbers = inputToNumbers(input);
+ * 
+ * @param {string} answer
+ * @returns {Array<number>} numbers
+ */
+const inputToNumbers = input => input.split(" ").map(Number);
 
+/***
+ * Find the path to the bottom of the pyramid which
+ * will accumulate the minimum sum of the passed values
+ *
+ * @param {Array} rows
+ */
 const findFastestPath = rows => {
-	// initials paths
+	// initials paths, use the first layer value
 	let paths = [rows[0][0]];
 
+	// iterate from one because the first layer values is already present in paths
 	for (let i = 1; i < rows.length; i++) {
 		// create the next row
 		let newPaths = [];
@@ -18,8 +37,7 @@ const findFastestPath = rows => {
 		// of the two paths that can land here are best. We only care about
 		// the most optimal path to a particular point
 		for (let j = 1; j < i; j++) {
-			const min = Math.min(
-				paths[j - 1] + rows[i][j],
+			const min = Math.min( paths[j - 1] + rows[i][j],
 				paths[j] + rows[i][j]
 			);
 
@@ -30,14 +48,21 @@ const findFastestPath = rows => {
 	return Math.min.apply(Math, paths);
 };
 
-const getLayersValues = async layers => {
+/***
+ * Iterate the layers number and get the values keyboard input for each
+ *
+ * @param {number} layers
+ * @returns the list with multiple lists containing values for each layer
+ */
+const readLayersValues = async layers => {
 	const rows = [];
 	console.log("Please write the values for this layer, put spaces between numbers, for the next layer press the 'enter' key\n");
 
+	// iterate each pyramid layer
 	for (let i = 1; i <= layers; i++) {
 		const values = [];
 
-		// block the loop until this layer will not get the values
+		// block the loop until this layer will not get the values keyboard input
 		await new Promise(resolve => {
 			rl.question(`Values for the ${i} layer \n`, answer => {
 				values.push(...inputToNumbers(answer));
@@ -53,16 +78,24 @@ const getLayersValues = async layers => {
 	return rows;
 };
 
+/***
+ * Check if layers keyboard input is a number,
+ * if so will pass the value to the callback, if not a number
+ * will print a warning and await keyboard input again
+ *
+ * @param {Function} callback		callback called if layers is a number
+ */
 const validateLayers = callback => layers => {
 	isNaN(layers)
 		? rl.question(`'${layers}' is not a 'number', please write a 'number' value \n`, validateLayers(callback))
 		: callback(layers);
 };
 
+// get the keyboard input for the count of pyramid layers
 rl.question("Please write the number of layers to be passed \n", validateLayers(async layers => {
-	const values = await getLayersValues(layers)
-
+	// get the values list for each pyramid layer
+	const values = await readLayersValues(layers);
 	const fastestPath = findFastestPath(values);
 
-	console.log(`The fastest path summ is ${fastestPath}`);
+	console.log(`The fastest path sum is ${fastestPath}`);
 }));
