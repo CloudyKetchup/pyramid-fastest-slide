@@ -18,9 +18,10 @@ const findFastestPath = rows => {
     // of the two paths that can land here are best. We only care about
     // the most optimal path to a particular point
     for (let j = 1; j < i; j++) {
-			const left 	= paths[j - 1] + rows[i][j];
-			const right = paths[j] + rows[i][j];
-			const min 	= Math.min(left, right);
+			const min 	= Math.min(
+				paths[j - 1] + rows[i][j],
+				paths[j] + rows[i][j]
+			);
 
 			newPaths[j] = min;
     }
